@@ -39,9 +39,9 @@ function sanitizeFilenamePart(value, fallback) {
 }
 
 function buildPdfFilename() {
-  const title = sanitizeFilenamePart('Glasfaser-Anschluss', 'Dokument');
+  const title = sanitizeFilenamePart('GF-Anschluss', 'Dokument');
   const city = sanitizeFilenamePart(State.city, 'Ohne_Stadt');
-  return `FibraGen_${title}_${city}_${formatDateForFilename()}.pdf`;
+  return `${title}_${city}_${formatDateForFilename()}.pdf`;
 }
 
 function makeQRDataUrl(url, size = 100) {
@@ -295,30 +295,22 @@ function buildCard(term) {
         <div class="qr-item">
           <div class="qr-lbl">Kundenadresse</div>
           <div class="qr-addr-row">
-            <input class="fi alone" data-field="clientAddr" type="text" placeholder="Ritterstr. 77" value="${esc(term.clientAddr)}">
+            <input class="fi alone" data-field="clientAddr" type="text" placeholder="z. B. Ohrestraße 10" value="${esc(term.clientAddr)}">
             <div class="qr-canvas-wrap empty" id="qrc-c-${term.id}"></div>
           </div>
           ${buildErrorRow('clientAddr')}
-          <div class="qr-lbl" style="color:var(--sky);font-size:0.6rem;">→ Google Maps</div>
         </div>
 
         <div class="qr-item">
           <div class="qr-lbl">Schrank-Adresse</div>
           <div class="qr-addr-row">
-            <input class="fi alone" data-field="cabinetAddr" type="text" placeholder="Ritterstr. 69" value="${esc(term.cabinetAddr)}">
+            <input class="fi alone" data-field="cabinetAddr" type="text" placeholder="z. B. Weitlingstraße 22" value="${esc(term.cabinetAddr)}">
             <div class="qr-canvas-wrap empty" id="qrc-k-${term.id}"></div>
           </div>
           ${buildErrorRow('cabinetAddr')}
-          <div class="qr-lbl" style="color:var(--sky);font-size:0.6rem;">→ Google Maps</div>
         </div>
       </div>
-    </div>
-
-    <div class="fg full">
-      <div class="fl">Kommentare</div>
-      <textarea class="comment-textarea" data-field="comment" placeholder="Kommentare eingeben...">${esc(term.comment)}</textarea>
-      ${buildErrorRow('comment')}
-    </div>
+    </div>    
 
     <div class="fg full">
       <div class="fl">Box-Nummer</div>
@@ -333,50 +325,60 @@ function buildCard(term) {
       ${buildErrorRow('boxSuffix')}
     </div>
 
-    <div class="fg">
-      <div class="fl">Koppler</div>
-      <div class="input-row">
-        <span class="pfx sky">K</span>
-        <input class="fi mid" data-field="couplerNum" type="text" placeholder="21" value="${esc(term.couplerNum)}" style="max-width:80px;">
-        <span class="sep">—</span>
-        <button class="step-btn minus" type="button" data-step="-1">−</button>
-        <input class="fi mid step-input" data-field="couplerPhase" inputmode="numeric" type="text" value="${term.couplerPhase}">
-        <button class="step-btn plus" type="button" data-step="1">+</button>
-        <span class="sfx">x</span>
-      </div>
-      ${buildErrorRow('couplerNum')}
-      ${buildErrorRow('couplerPhase')}
-    </div>
 
-    <div class="fg">
-      <div class="fl">Kassette VZK</div>
-      <div class="input-row">
-        <span class="pfx">VZK</span>
-        <input class="fi last" data-field="vzkNum" type="text" placeholder="33" value="${esc(term.vzkNum)}">
-      </div>
-      ${buildErrorRow('vzkNum')}
-    </div>
-
-    <div class="fg">
-      <div class="fl">+TA</div>
-      <div class="ta-check ${term.hasTA ? 'active' : ''}" id="ta-${term.id}">
-        <div class="ta-box">
-          <svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5" width="9" height="9">
-            <polyline points="2 6 5 9 10 3"/>
-          </svg>
+    <div class="fg full inline-row">
+      <div class="fg-sub">
+        <div class="fl">Koppler</div>
+        <div class="input-row">
+          <span class="pfx sky">K</span>
+          <input class="fi mid" data-field="couplerNum" type="text" placeholder="21" value="${esc(term.couplerNum)}" style="max-width:72px;">
+          <span class="sep">—</span>
+          <button class="step-btn minus" type="button" data-step="-1">−</button>
+          <input class="fi mid step-input" data-field="couplerPhase" inputmode="numeric" type="text" value="${term.couplerPhase}">
+          <button class="step-btn plus" type="button" data-step="1">+</button>
+          <span class="sfx">x</span>
         </div>
-        <span class="ta-lbl">+TA aktiviert</span>
-        <input type="checkbox" data-field="hasTA" ${term.hasTA ? 'checked' : ''} style="display:none;">
+        ${buildErrorRow('couplerNum')}
+        ${buildErrorRow('couplerPhase')}
+      </div>
+
+      <div class="fg-sub">
+        <div class="fl">Kassette VZK</div>
+        <div class="input-row">
+          <span class="pfx">VZK</span>
+          <input class="fi last" data-field="vzkNum" type="text" placeholder="33" value="${esc(term.vzkNum)}" style="max-width:72px;">
+        </div>
+        ${buildErrorRow('vzkNum')}
+      </div>
+
+      <div class="fg-sub fg-sub--ta">
+        <div class="fl" style="color:#c02030;">+TA</div>
+        <div class="ta-check ${term.hasTA ? 'active' : ''}" id="ta-${term.id}">
+          <div class="ta-box">
+            <svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5" width="9" height="9">
+              <polyline points="2 6 5 9 10 3"/>
+            </svg>
+          </div>
+          <span class="ta-lbl">+TA</span>
+          <input type="checkbox" data-field="hasTA" ${term.hasTA ? 'checked' : ''} style="display:none;">
+        </div>
       </div>
     </div>
 
-    <div class="fg">
+
+    <div class="fg full">
       <div class="fl">SM-Nummer</div>
       <div class="input-row">
         <span class="pfx">SM</span>
-        <input class="fi last" data-field="smNum" type="text" placeholder="210885400" value="${esc(term.smNum)}">
+        <input class="fi last" data-field="smNum" type="text" placeholder="z. B.210885400" value="${esc(term.smNum)}">
       </div>
       ${buildErrorRow('smNum')}
+    </div>
+
+    <div class="fg full">
+      <div class="fl">Kommentare</div>
+      <textarea class="comment-textarea" data-field="comment" placeholder="Kommentare eingeben...">${esc(term.comment)}</textarea>
+      ${buildErrorRow('comment')}
     </div>
   </div>`;
 
@@ -402,6 +404,43 @@ function buildCard(term) {
 
   card.querySelectorAll('[data-field]').forEach(el => {
     if (el.type === 'checkbox') return;
+
+    // ── Field-specific validation (digits only, max length) ──
+    const field = el.dataset.field;
+    const DIGIT_FIELDS = {
+      boxMid:     { max: 4, label: 'Box-Nummer 2P' },
+      boxSuffix:  { max: 3, label: 'Box-Suffix' },
+      couplerNum: { max: 2, label: 'Koppler' },
+      vzkNum:     { max: 2, label: 'Kassette VZK' },
+      smNum:      { max: 9, label: 'SM-Nummer' },
+    };
+
+    if (DIGIT_FIELDS[field]) {
+      const cfg = DIGIT_FIELDS[field];
+      el.addEventListener('keydown', e => {
+        // Allow: backspace, delete, tab, escape, arrows, home, end
+        const allowed = ['Backspace','Delete','Tab','Escape','ArrowLeft','ArrowRight','Home','End'];
+        if (allowed.includes(e.key)) return;
+        // Block non-digits
+        if (!/^\d$/.test(e.key)) { e.preventDefault(); return; }
+        // Block if already at max length
+        if (el.value.replace(/\D/g, '').length >= cfg.max) { e.preventDefault(); }
+      });
+      el.addEventListener('paste', e => {
+        e.preventDefault();
+        const pasted = (e.clipboardData || window.clipboardData).getData('text');
+        const digits = pasted.replace(/\D/g, '').slice(0, cfg.max);
+        const start = el.selectionStart, end = el.selectionEnd;
+        const current = el.value;
+        const next = (current.slice(0, start) + digits + current.slice(end)).replace(/\D/g, '').slice(0, cfg.max);
+        el.value = next;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      el.addEventListener('input', () => {
+        const clean = el.value.replace(/\D/g, '').slice(0, cfg.max);
+        if (el.value !== clean) el.value = clean;
+      });
+    }
 
     if (el.dataset.field === 'couplerPhase') {
       el.addEventListener('blur', () => {
@@ -581,7 +620,7 @@ function buildPageInnerHTML(terms, pageNum, totalPages, idPrefix) {
 
   return `
     <div class="a4-doc-header">
-      <div class="a4-logo-placeholder">LOGO</div>
+      <img class="a4-logo-img" src="img/S_W.png" alt="Schneider Winter Logo" onerror="this.style.display='none'">
       <div class="a4-doc-meta">
         <div class="a4-doc-title">Glasfaser-Anschluss</div>
         <div class="a4-doc-city">${esc(State.city)}</div>
