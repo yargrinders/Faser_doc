@@ -309,6 +309,33 @@ body {
   max-width: 200px;
 }
 
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 28px;
+  color: var(--text-dim);
+  cursor: grab;
+  flex-shrink: 0;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+  margin-right: 2px;
+}
+.drag-handle:hover {
+  color: var(--brand);
+  background: rgba(37, 99, 200, 0.07);
+}
+.drag-handle:active { cursor: grabbing; }
+
+.drag-placeholder {
+  background: rgba(37, 99, 200, 0.06);
+  border: 2px dashed rgba(37, 99, 200, 0.3);
+  border-radius: var(--radius-lg);
+  margin-bottom: 10px;
+  transition: height 0.1s ease;
+}
+
 .btn-remove {
   display: inline-flex;
   align-items: center;

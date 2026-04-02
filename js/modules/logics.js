@@ -238,11 +238,24 @@ function validateAndPaintTerm(id) {
   return validation.isValid;
 }
 
+function getTermIndex(id) {
+  return State.terms.findIndex(t => t.id === id) + 1;
+}
+
+function refreshAllCardNumbers() {
+  State.terms.forEach((term, i) => {
+    const card = document.querySelector(`.term-card[data-id="${term.id}"]`);
+    if (!card) return;
+    const numEl = card.querySelector('.term-num');
+    if (numEl) numEl.textContent = i + 1;
+  });
+}
+
 function refreshCardHeader(card, term) {
   if (!card || !term) return;
   const nameEl = card.querySelector('[data-name]');
   const addrEl = card.querySelector('[data-addr]');
-  if (nameEl) nameEl.textContent = term.clientAddr || `Terminal #${term.id}`;
+  if (nameEl) nameEl.textContent = term.clientAddr || `Terminal #${getTermIndex(term.id)}`;
   if (addrEl) addrEl.textContent = term.cabinetAddr ? `→ ${term.cabinetAddr}` : '';
 }
 
@@ -273,7 +286,14 @@ function buildCard(term) {
 
   card.innerHTML = `
   <div class="term-card-header">
-    <div class="term-num">${term.id}</div>
+    <div class="drag-handle" title="Ziehen zum Verschieben">
+      <svg viewBox="0 0 10 16" fill="currentColor" width="10" height="16">
+        <circle cx="3" cy="3" r="1.5"/><circle cx="7" cy="3" r="1.5"/>
+        <circle cx="3" cy="8" r="1.5"/><circle cx="7" cy="8" r="1.5"/>
+        <circle cx="3" cy="13" r="1.5"/><circle cx="7" cy="13" r="1.5"/>
+      </svg>
+    </div>
+    <div class="term-num">${getTermIndex(term.id)}</div>
     <div class="term-card-name" data-name>Terminal #${term.id}</div>
     <div class="term-card-addr" data-addr></div>
     <button class="btn-remove" data-del type="button">
@@ -386,7 +406,7 @@ function buildCard(term) {
 
   const header = card.querySelector('.term-card-header');
   header.addEventListener('click', e => {
-    if (e.target.closest('[data-del]') || e.target.closest('[data-step]')) return;
+    if (e.target.closest('[data-del]') || e.target.closest('[data-step]') || e.target.closest('.drag-handle')) return;
     card.classList.toggle('collapsed');
   });
 
@@ -482,13 +502,127 @@ function buildCard(term) {
     validateAndPaintTerm(term.id);
   }, 50);
 
+  // Drag-and-drop handle
+  const handle = card.querySelector('.drag-handle');
+  handle.addEventListener('mousedown', e => DragManager.start(e, card));
+  handle.addEventListener('touchstart', e => DragManager.start(e, card), { passive: false });
+
   return card;
 }
+
+const DragManager = {
+  dragging: null,
+  ghost: null,
+  listEl: null,
+  startY: 0,
+  offsetY: 0,
+  placeholder: null,
+
+  start(e, card) {
+    e.preventDefault();
+    this.listEl = card.parentElement;
+    this.dragging = card;
+
+    const rect = card.getBoundingClientRect();
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    this.offsetY = clientY - rect.top;
+
+    // Создаём призрак
+    this.ghost = card.cloneNode(true);
+    this.ghost.style.cssText = `
+      position: fixed;
+      left: ${rect.left}px;
+      top: ${rect.top}px;
+      width: ${rect.width}px;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.85;
+      box-shadow: 0 12px 32px rgba(17,43,84,0.22);
+      border-radius: var(--radius-lg);
+      transform: scale(1.02);
+      transition: box-shadow 0.15s ease;
+      background: var(--panel);
+    `;
+    document.body.appendChild(this.ghost);
+
+    // Placeholder — пустое место
+    this.placeholder = document.createElement('div');
+    this.placeholder.className = 'drag-placeholder';
+    this.placeholder.style.height = rect.height + 'px';
+    card.parentElement.insertBefore(this.placeholder, card);
+    card.style.display = 'none';
+
+    document.addEventListener('mousemove', this._onMove);
+    document.addEventListener('mouseup',   this._onEnd);
+    document.addEventListener('touchmove', this._onMove, { passive: false });
+    document.addEventListener('touchend',  this._onEnd);
+  },
+
+  _onMove(e) {
+    const self = DragManager;
+    if (!self.dragging) return;
+    e.preventDefault();
+
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const ghostTop = clientY - self.offsetY;
+    self.ghost.style.top = ghostTop + 'px';
+
+    // Найти куда вставить placeholder
+    const cards = [...self.listEl.querySelectorAll('.term-card:not([style*="display: none"])')];
+    let inserted = false;
+    for (const c of cards) {
+      const r = c.getBoundingClientRect();
+      if (clientY < r.top + r.height / 2) {
+        self.listEl.insertBefore(self.placeholder, c);
+        inserted = true;
+        break;
+      }
+    }
+    if (!inserted) self.listEl.appendChild(self.placeholder);
+  },
+
+  _onEnd() {
+    const self = DragManager;
+    if (!self.dragging) return;
+
+    // Вставляем карточку на место placeholder
+    self.listEl.insertBefore(self.dragging, self.placeholder);
+    self.dragging.style.display = '';
+    self.placeholder.remove();
+    self.ghost.remove();
+
+    // Синхронизируем State.terms с новым порядком DOM
+    const newOrder = [...self.listEl.querySelectorAll('.term-card')].map(c => parseInt(c.dataset.id));
+    self._reorderState(newOrder);
+
+    refreshAllCardNumbers();
+    PreviewManager.render();
+
+    self.dragging = null;
+    self.ghost = null;
+    self.placeholder = null;
+
+    document.removeEventListener('mousemove', self._onMove);
+    document.removeEventListener('mouseup',   self._onEnd);
+    document.removeEventListener('touchmove', self._onMove);
+    document.removeEventListener('touchend',  self._onEnd);
+  },
+
+  _reorderState(idOrder) {
+    State.terms = idOrder.map(id => State.terms.find(t => t.id === id)).filter(Boolean);
+    State.markDirty();
+  },
+};
+
+DragManager._onMove = DragManager._onMove.bind(DragManager);
+DragManager._onEnd  = DragManager._onEnd.bind(DragManager);
 
 const TermManager = {
   listEl: null,
   init(el) { this.listEl = el; },
   add() {
+    // Свернуть все открытые карточки
+    this.listEl.querySelectorAll('.term-card:not(.collapsed)').forEach(c => c.classList.add('collapsed'));
     const term = State.addTerm();
     const card = buildCard(term);
     this.listEl.appendChild(card);
@@ -499,6 +633,7 @@ const TermManager = {
     State.removeTerm(id);
     const card = this.listEl.querySelector(`[data-id="${id}"]`);
     if (card) card.remove();
+    refreshAllCardNumbers();
     PreviewManager.render();
     validateCity();
   },
@@ -532,7 +667,7 @@ const PreviewManager = {
       const inner = document.createElement('div');
       const scale = 0.31;
       inner.style.cssText = `transform:scale(${scale});transform-origin:top left;width:${100 / scale}%;font-family:Poppins,sans-serif;`;
-      inner.innerHTML = buildPageInnerHTML(slice, p + 1, pageCount, 'prev');
+      inner.innerHTML = buildPageInnerHTML(slice, p + 1, pageCount, 'prev', p * TERMS_PER_PAGE);
       page.appendChild(inner);
       page.style.height = `${297 * scale * (360 / 210)}px`;
       wrap.appendChild(page);
@@ -555,10 +690,10 @@ const PreviewManager = {
   },
 };
 
-function buildPageInnerHTML(terms, pageNum, totalPages, idPrefix) {
+function buildPageInnerHTML(terms, pageNum, totalPages, idPrefix, startIndex = 0) {
   let termsHTML = '';
 
-  terms.forEach(t => {
+  terms.forEach((t, idx) => {
     const boxHTML = `<span class="r">2P${esc(t.boxMid)}</span><span class="k">-${esc(t.boxSuffix)}</span>`;
     const coupler = t.couplerNum ? `K${t.couplerNum} - ${forcePositiveInt(t.couplerPhase, 1)}x` : '—';
     const vzk = t.vzkNum ? `VZK ${t.vzkNum}` : '—';
@@ -570,7 +705,7 @@ function buildPageInnerHTML(terms, pageNum, totalPages, idPrefix) {
       <div class="a4-term">
         <div class="a4-term-hdr">
           <div class="a4-term-hdr-left">
-            <span class="a4-term-num">${t.id}</span>
+            <span class="a4-term-num">${startIndex + idx + 1}</span>
             <span class="a4-term-client">${esc(t.clientAddr) || '—'}</span>
           </div>
           ${ta}
@@ -623,15 +758,15 @@ function buildPageInnerHTML(terms, pageNum, totalPages, idPrefix) {
       <img class="a4-logo-img" src="img/S_W.png" alt="Schneider Winter Logo" onerror="this.style.display='none'">
       <div class="a4-doc-meta">
         <div class="a4-doc-title">Glasfaser-Anschluss</div>
-        <div class="a4-doc-city">${esc(State.city)}</div>
+        <div class="a4-doc-city">${esc(State.city)} - ${formatDateForFilename()}</div>
         <div class="a4-doc-page">Seite ${pageNum} von ${totalPages}</div>
       </div>
     </div>
     <div class="a4-terms-list">${termsHTML}</div>`;
 }
 
-function buildPageHTML(terms, pageNum, totalPages, idPrefix) {
-  return `<div class="a4-sheet">${buildPageInnerHTML(terms, pageNum, totalPages, idPrefix)}</div>`;
+function buildPageHTML(terms, pageNum, totalPages, idPrefix, startIndex = 0) {
+  return `<div class="a4-sheet">${buildPageInnerHTML(terms, pageNum, totalPages, idPrefix, startIndex)}</div>`;
 }
 
 async function collectQRDataUrls() {
@@ -661,7 +796,7 @@ function buildPrintableRoot(qrMap, idPrefixBase) {
   for (let p = 0; p < pageCount; p++) {
     const slice = State.terms.slice(p * TERMS_PER_PAGE, (p + 1) * TERMS_PER_PAGE);
     const holder = document.createElement('div');
-    holder.innerHTML = buildPageHTML(slice, p + 1, pageCount, `${idPrefixBase}-p${p}`);
+    holder.innerHTML = buildPageHTML(slice, p + 1, pageCount, `${idPrefixBase}-p${p}`, p * TERMS_PER_PAGE);
     root.appendChild(holder.firstElementChild);
     injectQRImages(root, qrMap, `${idPrefixBase}-p${p}`);
   }
@@ -738,7 +873,7 @@ const PrintManager = {
     const pageCount = Math.ceil(State.terms.length / TERMS_PER_PAGE);
     for (let p = 0; p < pageCount; p++) {
       const slice = State.terms.slice(p * TERMS_PER_PAGE, (p + 1) * TERMS_PER_PAGE);
-      pagesHTML += buildPageHTML(slice, p + 1, pageCount, `print-p${p}`);
+      pagesHTML += buildPageHTML(slice, p + 1, pageCount, `print-p${p}`, p * TERMS_PER_PAGE);
     }
 
     doc.open();
