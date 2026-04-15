@@ -15,6 +15,10 @@ function mapsUrl(city, addr) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
 }
 
+function effectiveCity(term) {
+  return State.multiCity ? (term.termCity || '') : State.city;
+}
+
 function forcePositiveInt(value, fallback = 1) {
   const n = parseInt(String(value || '').replace(/\D+/g, ''), 10);
   if (Number.isNaN(n) || n < 1) return fallback;
@@ -38,9 +42,15 @@ function sanitizeFilenamePart(value, fallback) {
   return cleaned || fallback;
 }
 
+function getDisplayCity() {
+  if (!State.multiCity) return State.city;
+  const cities = [...new Set(State.terms.map(t => (t.termCity || '').trim()).filter(Boolean))];
+  return cities.length ? cities.join(' / ') : 'Multi-Stadt';
+}
+
 function buildPdfFilename() {
   const title = sanitizeFilenamePart('GF-Anschluss', 'Dokument');
-  const city = sanitizeFilenamePart(State.city, 'Ohne_Stadt');
+  const city = sanitizeFilenamePart(getDisplayCity(), 'Ohne_Stadt');
   return `${title}_${city}_${formatDateForFilename()}.pdf`;
 }
 
@@ -117,6 +127,7 @@ const REQUIRED_LABELS = {
 
 const State = {
   city: '',
+  multiCity: false,
   terms: [],
   _nextId: 1,
   _dirty: false,
@@ -125,9 +136,15 @@ const State = {
   markDirty() { this._dirty = true; },
   isDirty() { return this._dirty; },
 
+  setMultiCity(value) {
+    this.multiCity = value;
+    this.markDirty();
+  },
+
   addTerm() {
     const term = {
       id: this._nextId++,
+      termCity: '',
       clientAddr: '',
       cabinetAddr: '',
       boxMid: '',
@@ -167,6 +184,7 @@ function getTermById(id) {
 }
 
 function validateCity() {
+  if (State.multiCity) return true;
   const input = document.getElementById('global-city');
   const errorEl = document.getElementById('city-error');
   const valid = Boolean(String(State.city || '').trim());
@@ -266,8 +284,9 @@ function buildErrorRow(field) {
 function refreshQRs(id) {
   const term = getTermById(id);
   if (!term) return;
-  const clientUrl = mapsUrl(State.city, term.clientAddr);
-  const cabinetUrl = mapsUrl(State.city, term.cabinetAddr);
+  const city = effectiveCity(term);
+  const clientUrl = mapsUrl(city, term.clientAddr);
+  const cabinetUrl = mapsUrl(city, term.cabinetAddr);
   const cEl = document.getElementById(`qrc-c-${id}`);
   const kEl = document.getElementById(`qrc-k-${id}`);
   if (cEl) renderQRInto(cEl, clientUrl, 60);
@@ -308,6 +327,17 @@ function buildCard(term) {
   </div>
   <div class="term-card-body">
     <div class="form-alert" data-form-alert></div>
+
+    <div class="fg full term-city-row" style="${State.multiCity ? '' : 'display:none'}">
+      <div class="fl" style="color:var(--accent)">Stadt (dieses Terminal)</div>
+      <div class="input-row">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" width="13" height="13" style="color:var(--accent);flex-shrink:0">
+          <path d="M8 1.5C5.52 1.5 3.5 3.52 3.5 6c0 3.75 4.5 8.5 4.5 8.5S12.5 9.75 12.5 6c0-2.48-2.02-4.5-4.5-4.5z"/>
+          <circle cx="8" cy="6" r="1.5"/>
+        </svg>
+        <input class="fi last" data-field="termCity" type="text" placeholder="z. B. Berlin" value="${esc(term.termCity || '')}" style="margin-left:6px;">
+      </div>
+    </div>
 
     <div class="fg full">
       <div class="fl">Adressen &amp; QR-Codes</div>
@@ -478,7 +508,7 @@ function buildCard(term) {
       if (field === 'couplerPhase') el.value = String(value);
       State.update(term.id, field, value);
       refreshCardHeader(card, getTermById(term.id));
-      if (field === 'clientAddr' || field === 'cabinetAddr') refreshQRs(term.id);
+      if (field === 'clientAddr' || field === 'cabinetAddr' || field === 'termCity') refreshQRs(term.id);
       validateAndPaintTerm(term.id);
       PreviewManager.render();
     });
@@ -682,10 +712,11 @@ const PreviewManager = {
   },
   renderPreviewQRs() {
     State.terms.forEach(term => {
+      const city = effectiveCity(term);
       const cEl = document.getElementById(`prev-qrc-c-${term.id}`);
       const kEl = document.getElementById(`prev-qrc-k-${term.id}`);
-      if (cEl) renderQRInto(cEl, mapsUrl(State.city, term.clientAddr), 78);
-      if (kEl) renderQRInto(kEl, mapsUrl(State.city, term.cabinetAddr), 78);
+      if (cEl) renderQRInto(cEl, mapsUrl(city, term.clientAddr), 78);
+      if (kEl) renderQRInto(kEl, mapsUrl(city, term.cabinetAddr), 78);
     });
   },
 };
@@ -758,7 +789,7 @@ function buildPageInnerHTML(terms, pageNum, totalPages, idPrefix, startIndex = 0
       <img class="a4-logo-img" src="img/S_W.png" alt="Schneider Winter Logo" onerror="this.style.display='none'">
       <div class="a4-doc-meta">
         <div class="a4-doc-title">Glasfaser-Anschluss</div>
-        <div class="a4-doc-city">${esc(State.city)} - ${formatDateForFilename()}</div>
+        <div class="a4-doc-city">${esc(getDisplayCity())} - ${formatDateForFilename()}</div>
         <div class="a4-doc-page">Seite ${pageNum} von ${totalPages}</div>
       </div>
     </div>
@@ -772,8 +803,9 @@ function buildPageHTML(terms, pageNum, totalPages, idPrefix, startIndex = 0) {
 async function collectQRDataUrls() {
   const map = {};
   for (const term of State.terms) {
-    const clientUrl = mapsUrl(State.city, term.clientAddr);
-    const cabinetUrl = mapsUrl(State.city, term.cabinetAddr);
+    const city = effectiveCity(term);
+    const clientUrl = mapsUrl(city, term.clientAddr);
+    const cabinetUrl = mapsUrl(city, term.cabinetAddr);
     if (clientUrl) map[`c-${term.id}`] = await makeQRDataUrl(clientUrl, 110);
     if (cabinetUrl) map[`k-${term.id}`] = await makeQRDataUrl(cabinetUrl, 110);
   }
@@ -923,6 +955,21 @@ function initBeforeUnload() {
   });
 }
 
+function toggleMultiCity(enabled) {
+  State.setMultiCity(enabled);
+  // Show/hide global city row
+  const cityRow = document.querySelector('.city-row');
+  const cityError = document.getElementById('city-error');
+  if (cityRow) cityRow.style.display = enabled ? 'none' : '';
+  if (cityError) cityError.style.display = enabled ? 'none' : '';
+  // Show/hide per-term city rows
+  document.querySelectorAll('.term-city-row').forEach(el => {
+    el.style.display = enabled ? '' : 'none';
+  });
+  refreshAllQRs();
+  PreviewManager.render();
+}
+
 window.FibraLogics = {
   State,
   TermManager,
@@ -935,4 +982,5 @@ window.FibraLogics = {
   validateAllTerms,
   validateAndPaintTerm,
   validateCity,
+  toggleMultiCity,
 };

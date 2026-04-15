@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshAllQRs,
     initBeforeUnload,
     validateCity,
+    toggleMultiCity,
   } = Fibra;
 
   TermManager.init(document.getElementById('terms-list'));
@@ -31,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
     validateCity();
     refreshAllQRs();
     PreviewManager.render();
+  });
+
+  const multiToggle = document.getElementById('multi-city-toggle');
+  multiToggle.addEventListener('change', () => {
+    toggleMultiCity(multiToggle.checked);
+    validateCity();
   });
 
   document.getElementById('btn-add-term').addEventListener('click', () => {
