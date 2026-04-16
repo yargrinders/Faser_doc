@@ -200,6 +200,9 @@ function validateTerm(term) {
       errors[field] = `${REQUIRED_LABELS[field]} ist erforderlich.`;
     }
   });
+  if (State.multiCity && !String(term.termCity || '').trim()) {
+    errors['termCity'] = 'Stadt ist erforderlich.';
+  }
   term.couplerPhase = forcePositiveInt(term.couplerPhase, 1);
   return { isValid: Object.keys(errors).length === 0, errors };
 }
@@ -731,12 +734,16 @@ function buildPageInnerHTML(terms, pageNum, totalPages, idPrefix, startIndex = 0
     const sm = t.smNum ? `SM${t.smNum}` : '—';
     const ta = t.hasTA ? '<span class="a4-ta-badge">+TA</span>' : '';
     const comment = String(t.comment || '').trim() || '—';
+    const cityDisplay = State.multiCity
+      ? (String(t.termCity || '').trim() || '—')
+      : (String(State.city || '').trim() || '—');
 
     termsHTML += `
       <div class="a4-term">
         <div class="a4-term-hdr">
           <div class="a4-term-hdr-left">
             <span class="a4-term-num">${startIndex + idx + 1}</span>
+            <span class="a4-term-city-tag">${esc(cityDisplay)}</span>
             <span class="a4-term-client">${esc(t.clientAddr) || '—'}</span>
           </div>
           ${ta}

@@ -968,6 +968,8 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .a4-term-num {
@@ -1071,24 +1073,215 @@ body {
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media (max-width: 1200px) {
-  .layout { grid-template-columns: 1fr; }
-  .preview-panel { display: none; }
+
+/* — Base overflow guard — */
+body { overflow-x: hidden; }
+
+/* ── 1280px: preview sidebar gets a bit narrower ── */
+@media (max-width: 1280px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 300px;
+  }
+  .header-inner {
+    padding-inline: 16px;
+  }
 }
 
+/* ── 1100px: hide sidebar, editor goes full width ── */
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .preview-panel {
+    display: none;
+  }
+}
+
+/* ── 860px: tablet – header stacks, card body 1 col ── */
 @media (max-width: 860px) {
+  /* Header */
   .header-inner {
+    min-height: auto;
     padding: 10px 14px;
-    gap: 10px;
-    align-items: flex-start;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .brand-logo {
+    height: 38px;
+  }
+  .header-actions {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  /* Toogle label text hidden, only icon+switch on tablet */
+  .header-multi-label {
+    display: none;
   }
 
-  .layout { min-height: auto; }
-  .editor { padding: 12px; }
+  /* Editor */
+  .editor { padding: 14px; }
+
+  /* City bar */
   .city-row { flex-wrap: wrap; }
-  .term-card-body { grid-template-columns: 1fr; }
-  .qr-pair { grid-template-columns: 1fr; gap: 10px; }
+  .city-hint { display: none; }
+
+  /* Cards */
+  .term-card-body {
+    grid-template-columns: 1fr;
+    gap: 8px 0;
+  }
+
+  /* Koppler+VZK+TA row — allow wrap on tablet */
+  .inline-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .fg-sub { flex-shrink: 1; }
+  .fg-sub--ta { flex: 0 0 auto; min-width: 0; }
+  .fg-sub--ta .ta-check { width: auto; }
+
+  /* QR block */
+  .qr-pair {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* term-card header: addr can wrap */
+  .term-card-addr {
+    max-width: 140px;
+  }
+}
+
+/* ── 640px: large mobile ── */
+@media (max-width: 640px) {
+  /* Header: full column stack */
+  .header-inner {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .brand {
+    justify-content: space-between;
+  }
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+  }
+  /* toggle occupies first column, buttons fill rest */
+  .header-multi-toggle {
+    padding: 6px 10px;
+    justify-content: center;
+  }
+  .header-multi-label {
+    display: none;
+  }
+  .header-divider {
+    display: none;
+  }
+  .btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 10px;
+    font-size: 0.8rem;
+  }
+
+  /* Editor */
+  .editor { padding: 10px; }
+
+  /* City bar */
+  .city-row {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .city-label { white-space: normal; }
+  .city-input { flex-basis: 100%; width: 100%; }
+
+  /* Cards */
+  .term-card-body {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .term-card-header {
+    padding: 7px 10px;
+    gap: 6px;
+  }
+  .term-card-addr { max-width: 100px; }
+
+  /* Inline row — always wrap on mobile */
+  .inline-row {
+    flex-direction: column !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .fg-sub { width: 100%; }
+  .fg-sub--ta { min-width: 0; }
+  .fg-sub--ta .ta-check { width: auto; }
+
+  /* QR block — 1 column */
+  .qr-pair {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  /* Inputs: all rows still stretch naturally */
+  .input-row { min-width: 0; }
+
+  /* Add button */
+  .btn-add { min-height: 48px; font-size: 0.82rem; }
+}
+
+/* ── 420px: very small phones (iPhone SE, Galaxy A14…) ── */
+@media (max-width: 420px) {
+  html { font-size: 13px; }
+
+  .header-inner { padding: 8px 10px; }
+  .brand-logo { height: 32px; max-width: 100px; }
+
+  /* Header actions: toggle + two buttons stacked */
+  .header-actions {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+  .header-multi-toggle {
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+  #btn-print, #btn-pdf {
+    width: 100%;
+  }
+
+  .editor { padding: 8px; }
+
+  .term-card-body { padding: 8px; gap: 7px; }
+  .term-card-header { padding: 6px 8px; }
+
+  /* Prefixes / separators — tighter on tiny screens */
+  .pfx, .sfx, .sep { padding-inline: 7px; font-size: 0.76rem; }
+
+  /* Stepper buttons */
+  .step-btn, .stepper-btn {
+    width: 28px;
+    min-width: 28px;
+  }
+  .step-input, .stepper-value {
+    width: 36px;
+    min-width: 36px;
+    max-width: 36px;
+  }
+
+  /* QR canvas in card – slightly smaller on tiny screens */
+  .qr-canvas-wrap {
+    width: 38px;
+    height: 38px;
+  }
+
+  .btn-add { min-height: 44px; font-size: 0.8rem; }
 }
 
 /* ===================== PRINT ===================== */
@@ -1098,21 +1291,56 @@ body {
   .a4-sheet { margin: 0; }
   .a4-ta-badge { color: #e03040 !important; }
 }
-/* ===================== MULTI-CITY TOGGLE ===================== */
-.multi-city-toggle-row {
-  display: flex;
-  align-items: center;
-  padding: 8px 0 4px;
+/* ===================== MULTI-CITY TOGGLE (HEADER) ===================== */
+
+/* Divider between toggle and buttons */
+.header-divider {
+  width: 1px;
+  height: 28px;
+  background: var(--line-strong);
+  flex-shrink: 0;
 }
 
-.multi-city-label {
+/* Toggle label sits inline in header-actions */
+.header-multi-toggle {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   cursor: pointer;
   user-select: none;
+  padding: 6px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  transition: border-color 0.18s, background 0.18s;
+  min-height: 40px;
 }
 
+.header-multi-toggle:hover {
+  border-color: var(--brand-soft-2);
+  background: var(--brand-soft);
+}
+
+/* When toggle is ON, highlight the whole label */
+.header-multi-toggle:has(input:checked) {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.header-multi-label {
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  transition: color 0.18s;
+}
+
+.header-multi-toggle:has(input:checked) .header-multi-label {
+  color: var(--brand);
+}
+
+/* Toggle switch */
 .multi-city-switch {
   position: relative;
   width: 38px;
@@ -1146,7 +1374,7 @@ body {
   background: #fff;
   border-radius: 50%;
   transition: transform 0.2s ease;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.22);
 }
 
 .multi-city-switch input:checked + .multi-city-slider {
@@ -1157,18 +1385,7 @@ body {
   transform: translateX(16px);
 }
 
-.multi-city-text {
-  font-size: .8rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.multi-city-hint {
-  font-size: .72rem;
-  color: var(--text-dim);
-}
-
-/* Per-terminal city field */
+/* ===================== PER-TERMINAL CITY FIELD ===================== */
 .term-city-row {
   background: var(--brand-soft);
   border: 1px solid var(--brand-soft-2);
@@ -1182,4 +1399,22 @@ body {
   letter-spacing: .04em;
   text-transform: uppercase;
   margin-bottom: 4px;
+}
+
+/* ===================== A4 TERM CITY TAG ===================== */
+.a4-term-city-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--brand, #244aa5);
+  background: rgba(36,74,165,0.09);
+  border: 1px solid rgba(36,74,165,0.18);
+  border-radius: 5px;
+  padding: 1px 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
