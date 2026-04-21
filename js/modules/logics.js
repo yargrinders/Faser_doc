@@ -25,10 +25,18 @@ function forcePositiveInt(value, fallback = 1) {
   return n;
 }
 
-function formatDateForFilename(date = new Date()) {
-  const d = String(date.getDate()).padStart(2, '0');
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const y = date.getFullYear();
+function getDocDate() {
+  if (window.CalendarPicker && typeof window.CalendarPicker.getDate === 'function') {
+    return window.CalendarPicker.getDate();
+  }
+  return new Date();
+}
+
+function formatDateForFilename(date) {
+  const src = date || getDocDate();
+  const d = String(src.getDate()).padStart(2, '0');
+  const m = String(src.getMonth() + 1).padStart(2, '0');
+  const y = src.getFullYear();
   return `${d}.${m}.${y}`;
 }
 

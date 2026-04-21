@@ -71,6 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ── Календарь ──────────────────────────────────────────────────────────
+  if (window.CalendarPicker) {
+    CalendarPicker.init();
+    // При смене даты — перерисовываем превью (дата обновится через getDocDate())
+    CalendarPicker.onChange(() => {
+      PreviewManager.render();
+    });
+  }
+
   initBeforeUnload();
   validateCity();
   TermManager.add();

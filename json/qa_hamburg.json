@@ -1,0 +1,158 @@
+{
+  "pages": [
+    {
+      "city": "Berlin",
+      "terms": [
+        {
+          "clientAddr": "Alexanderplatz 7, 10178 Berlin",
+          "cabinetAddr": "Karl-Liebknecht-Straße 13, 10178 Berlin",
+          "boxMid": "1201",
+          "boxSuffix": "101",
+          "couplerNum": "01",
+          "couplerPhase": 1,
+          "vzkNum": "11",
+          "hasTA": false,
+          "smNum": "401",
+          "comment": "Fake test data — Berlin sheet 1"
+        },
+        {
+          "clientAddr": "Friedrichstraße 98, 10117 Berlin",
+          "cabinetAddr": "Leipziger Straße 45, 10117 Berlin",
+          "boxMid": "1202",
+          "boxSuffix": "102",
+          "couplerNum": "02",
+          "couplerPhase": 1,
+          "vzkNum": "12",
+          "hasTA": true,
+          "smNum": "402",
+          "comment": "Fake test data — Berlin sheet 1"
+        },
+        {
+          "clientAddr": "Unter den Linden 33, 10117 Berlin",
+          "cabinetAddr": "Behrenstraße 21, 10117 Berlin",
+          "boxMid": "1203",
+          "boxSuffix": "103",
+          "couplerNum": "03",
+          "couplerPhase": 2,
+          "vzkNum": "13",
+          "hasTA": false,
+          "smNum": "403",
+          "comment": "Fake test data — Berlin sheet 1"
+        },
+        {
+          "clientAddr": "Prenzlauer Allee 144, 10409 Berlin",
+          "cabinetAddr": "Danziger Straße 62, 10435 Berlin",
+          "boxMid": "1204",
+          "boxSuffix": "104",
+          "couplerNum": "04",
+          "couplerPhase": 2,
+          "vzkNum": "14",
+          "hasTA": true,
+          "smNum": "404",
+          "comment": "Fake test data — Berlin sheet 1"
+        },
+        {
+          "clientAddr": "Warschauer Straße 55, 10243 Berlin",
+          "cabinetAddr": "Revaler Straße 8, 10245 Berlin",
+          "boxMid": "1205",
+          "boxSuffix": "105",
+          "couplerNum": "05",
+          "couplerPhase": 3,
+          "vzkNum": "15",
+          "hasTA": false,
+          "smNum": "405",
+          "comment": "Fake test data — Berlin sheet 1"
+        },
+        {
+          "clientAddr": "Kurfürstendamm 115, 10711 Berlin",
+          "cabinetAddr": "Joachimsthaler Straße 26, 10719 Berlin",
+          "boxMid": "1206",
+          "boxSuffix": "106",
+          "couplerNum": "06",
+          "couplerPhase": 3,
+          "vzkNum": "16",
+          "hasTA": true,
+          "smNum": "406",
+          "comment": "Fake test data — Berlin sheet 1"
+        }
+      ]
+    },
+    {
+      "city": "Hamburg",
+      "terms": [
+        {
+          "clientAddr": "Mönckebergstraße 17, 20095 Hamburg",
+          "cabinetAddr": "Steinstraße 29, 20095 Hamburg",
+          "boxMid": "2201",
+          "boxSuffix": "201",
+          "couplerNum": "07",
+          "couplerPhase": 1,
+          "vzkNum": "21",
+          "hasTA": false,
+          "smNum": "501",
+          "comment": "Fake test data — Hamburg sheet 2"
+        },
+        {
+          "clientAddr": "Spitalerstraße 22, 20095 Hamburg",
+          "cabinetAddr": "Adenauerallee 14, 20097 Hamburg",
+          "boxMid": "2202",
+          "boxSuffix": "202",
+          "couplerNum": "08",
+          "couplerPhase": 1,
+          "vzkNum": "22",
+          "hasTA": true,
+          "smNum": "502",
+          "comment": "Fake test data — Hamburg sheet 2"
+        },
+        {
+          "clientAddr": "Reeperbahn 101, 20359 Hamburg",
+          "cabinetAddr": "Davidstraße 11, 20359 Hamburg",
+          "boxMid": "2203",
+          "boxSuffix": "203",
+          "couplerNum": "09",
+          "couplerPhase": 2,
+          "vzkNum": "23",
+          "hasTA": false,
+          "smNum": "503",
+          "comment": "Fake test data — Hamburg sheet 2"
+        },
+        {
+          "clientAddr": "Jungfernstieg 40, 20354 Hamburg",
+          "cabinetAddr": "Große Bleichen 31, 20354 Hamburg",
+          "boxMid": "2204",
+          "boxSuffix": "204",
+          "couplerNum": "10",
+          "couplerPhase": 2,
+          "vzkNum": "24",
+          "hasTA": true,
+          "smNum": "504",
+          "comment": "Fake test data — Hamburg sheet 2"
+        },
+        {
+          "clientAddr": "Altonaer Straße 80, 20357 Hamburg",
+          "cabinetAddr": "Schanzenstraße 36, 20357 Hamburg",
+          "boxMid": "2205",
+          "boxSuffix": "205",
+          "couplerNum": "11",
+          "couplerPhase": 3,
+          "vzkNum": "25",
+          "hasTA": false,
+          "smNum": "505",
+          "comment": "Fake test data — Hamburg sheet 2"
+        },
+        {
+          "clientAddr": "Fuhlsbüttler Straße 167, 22307 Hamburg",
+          "cabinetAddr": "Barmbeker Markt 14, 22081 Hamburg",
+          "boxMid": "2206",
+          "boxSuffix": "206",
+          "couplerNum": "12",
+          "couplerPhase": 3,
+          "vzkNum": "26",
+          "hasTA": true,
+          "smNum": "506",
+          "comment": "Fake test data — Hamburg sheet 2"
+        }
+      ]
+    }
+  ]
+}

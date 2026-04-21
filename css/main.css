@@ -1401,6 +1401,244 @@ body { overflow-x: hidden; }
   margin-bottom: 4px;
 }
 
+/* ===================== CALENDAR PICKER ===================== */
+
+/* Обёртка — позиционирование относительно неё */
+.cal-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Кнопка-триггер: такой же стиль, как .btn-ghost */
+.cal-trigger {
+  gap: 7px;
+}
+
+/* Текст "Heute" или дата */
+.cal-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--brand);
+  transition: color 0.15s;
+}
+.cal-label--picked {
+  color: var(--sky);
+}
+
+/* Попап */
+.cal-popup {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: 288px;
+  background: #fff;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 40px rgba(19,46,93,0.14);
+  padding: 14px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.cal-popup--open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Шапка: ← Месяц Год → */
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 6px;
+}
+.cal-header-title {
+  font-size: 0.87rem;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  text-align: center;
+}
+.cal-nav {
+  background: none;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.cal-nav:hover {
+  background: var(--brand-soft);
+}
+
+/* Сетка */
+.cal-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cal-daynames {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.cal-daynames span {
+  padding: 2px 0;
+}
+.cal-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+/* Убираем grid у .cal-grid — дни идут в одну строку через CSS grid */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.cal-daynames {
+  grid-column: 1 / -1;
+}
+
+.cal-day:hover:not(:disabled) {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.cal-day--dim {
+  color: var(--text-dim);
+  opacity: 0.4;
+}
+.cal-day--today {
+  background: var(--brand-soft-2);
+  color: var(--brand);
+  font-weight: 700;
+}
+.cal-day--selected {
+  background: var(--brand);
+  color: #fff !important;
+  font-weight: 700;
+}
+.cal-day--selected:hover {
+  background: var(--brand-2) !important;
+}
+
+/* Быстрые кнопки внизу */
+.cal-footer {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.cal-footer button {
+  flex: 1;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.cal-btn-today, .cal-btn-tomorrow {
+  background: var(--brand-soft);
+  color: var(--brand);
+  border: 1px solid transparent;
+}
+.cal-btn-today:hover, .cal-btn-tomorrow:hover {
+  background: var(--brand-soft-2);
+}
+.cal-btn-clear {
+  background: none;
+  color: var(--text-dim);
+  border: 1px solid var(--line-strong);
+}
+.cal-btn-clear:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* Скрыть текст "Heute" на планшете (как Multi-Stadt) */
+@media (max-width: 860px) {
+  .cal-label {
+    display: none;
+  }
+}
+
+/* На маленьком экране (640px) кнопка занимает колонку в grid */
+@media (max-width: 640px) {
+  .cal-label {
+    display: inline; /* показываем снова, места достаточно */
+    font-size: 0.78rem;
+  }
+  /* Попап — на полную ширину экрана */
+  .cal-popup {
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    width: auto;
+    transform: none !important;
+    bottom: auto;
+  }
+  /* grid для header-actions: toggle | cal | print | pdf */
+  .header-actions {
+    grid-template-columns: auto auto 1fr 1fr !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .cal-popup {
+    left: 4px;
+    right: 4px;
+  }
+  .header-actions {
+    grid-template-columns: auto auto 1fr !important;
+    grid-template-rows: auto auto !important;
+  }
+  .cal-wrapper {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .header-multi-toggle {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+  }
+  #btn-print, #btn-pdf {
+    grid-column: 2 / span 2;
+  }
+}
+
 /* ===================== A4 TERM CITY TAG ===================== */
 .a4-term-city-tag {
   display: inline-flex;

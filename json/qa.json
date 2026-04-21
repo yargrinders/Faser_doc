@@ -1,156 +1,156 @@
 {
   "pages": [
     {
-      "city": "Berlin",
+      "city": "Magdeburg",
       "terms": [
         {
-          "clientAddr": "Alexanderplatz 7, 10178 Berlin",
-          "cabinetAddr": "Karl-Liebknecht-Straße 13, 10178 Berlin",
-          "boxMid": "1201",
+          "clientAddr": "Breiter Weg 120, 39104 Magdeburg",
+          "cabinetAddr": "Ernst-Reuter-Allee 45, 39104 Magdeburg",
+          "boxMid": "3201",
           "boxSuffix": "101",
           "couplerNum": "01",
           "couplerPhase": 1,
-          "vzkNum": "11",
+          "vzkNum": "31",
           "hasTA": false,
-          "smNum": "401",
-          "comment": "Fake test data — Berlin sheet 1"
+          "smNum": "701",
+          "comment": "Fake test data — Magdeburg sheet 1"
         },
         {
-          "clientAddr": "Friedrichstraße 98, 10117 Berlin",
-          "cabinetAddr": "Leipziger Straße 45, 10117 Berlin",
-          "boxMid": "1202",
+          "clientAddr": "Otto-von-Guericke-Straße 88, 39104 Magdeburg",
+          "cabinetAddr": "Hasselbachplatz 2, 39104 Magdeburg",
+          "boxMid": "3202",
           "boxSuffix": "102",
           "couplerNum": "02",
           "couplerPhase": 1,
-          "vzkNum": "12",
+          "vzkNum": "32",
           "hasTA": true,
-          "smNum": "402",
-          "comment": "Fake test data — Berlin sheet 1"
+          "smNum": "702",
+          "comment": "Fake test data — Magdeburg sheet 1"
         },
         {
-          "clientAddr": "Unter den Linden 33, 10117 Berlin",
-          "cabinetAddr": "Behrenstraße 21, 10117 Berlin",
-          "boxMid": "1203",
+          "clientAddr": "Halberstädter Straße 150, 39112 Magdeburg",
+          "cabinetAddr": "Sudenburger Wuhne 7, 39112 Magdeburg",
+          "boxMid": "3203",
           "boxSuffix": "103",
           "couplerNum": "03",
           "couplerPhase": 2,
-          "vzkNum": "13",
+          "vzkNum": "33",
           "hasTA": false,
-          "smNum": "403",
-          "comment": "Fake test data — Berlin sheet 1"
+          "smNum": "703",
+          "comment": "Fake test data — Magdeburg sheet 1"
         },
         {
-          "clientAddr": "Prenzlauer Allee 144, 10409 Berlin",
-          "cabinetAddr": "Danziger Straße 62, 10435 Berlin",
-          "boxMid": "1204",
+          "clientAddr": "Berliner Chaussee 48, 39114 Magdeburg",
+          "cabinetAddr": "Cracauer Straße 66, 39114 Magdeburg",
+          "boxMid": "3204",
           "boxSuffix": "104",
           "couplerNum": "04",
           "couplerPhase": 2,
-          "vzkNum": "14",
+          "vzkNum": "34",
           "hasTA": true,
-          "smNum": "404",
-          "comment": "Fake test data — Berlin sheet 1"
+          "smNum": "704",
+          "comment": "Fake test data — Magdeburg sheet 1"
         },
         {
-          "clientAddr": "Warschauer Straße 55, 10243 Berlin",
-          "cabinetAddr": "Revaler Straße 8, 10245 Berlin",
-          "boxMid": "1205",
+          "clientAddr": "Lübecker Straße 95, 39124 Magdeburg",
+          "cabinetAddr": "Agnetenstraße 20, 39106 Magdeburg",
+          "boxMid": "3205",
           "boxSuffix": "105",
           "couplerNum": "05",
           "couplerPhase": 3,
-          "vzkNum": "15",
+          "vzkNum": "35",
           "hasTA": false,
-          "smNum": "405",
-          "comment": "Fake test data — Berlin sheet 1"
+          "smNum": "705",
+          "comment": "Fake test data — Magdeburg sheet 1"
         },
         {
-          "clientAddr": "Kurfürstendamm 115, 10711 Berlin",
-          "cabinetAddr": "Joachimsthaler Straße 26, 10719 Berlin",
-          "boxMid": "1206",
+          "clientAddr": "Große Diesdorfer Straße 210, 39110 Magdeburg",
+          "cabinetAddr": "Diesdorfer Graseweg 3, 39110 Magdeburg",
+          "boxMid": "3206",
           "boxSuffix": "106",
           "couplerNum": "06",
           "couplerPhase": 3,
-          "vzkNum": "16",
+          "vzkNum": "36",
           "hasTA": true,
-          "smNum": "406",
-          "comment": "Fake test data — Berlin sheet 1"
+          "smNum": "706",
+          "comment": "Fake test data — Magdeburg sheet 1"
         }
       ]
     },
     {
-      "city": "Hamburg",
+      "city": "Magdeburg Region",
       "terms": [
         {
-          "clientAddr": "Mönckebergstraße 17, 20095 Hamburg",
-          "cabinetAddr": "Steinstraße 29, 20095 Hamburg",
-          "boxMid": "2201",
+          "clientAddr": "Breiteweg 12, 39179 Barleben",
+          "cabinetAddr": "Lindenallee 5, 39179 Barleben",
+          "boxMid": "4201",
           "boxSuffix": "201",
           "couplerNum": "07",
           "couplerPhase": 1,
-          "vzkNum": "21",
+          "vzkNum": "41",
           "hasTA": false,
-          "smNum": "501",
-          "comment": "Fake test data — Hamburg sheet 2"
+          "smNum": "801",
+          "comment": "Fake test data — Magdeburg sheet 2"
         },
         {
-          "clientAddr": "Spitalerstraße 22, 20095 Hamburg",
-          "cabinetAddr": "Adenauerallee 14, 20097 Hamburg",
-          "boxMid": "2202",
+          "clientAddr": "August-Bebel-Straße 8, 39326 Wolmirstedt",
+          "cabinetAddr": "Bahnhofstraße 14, 39326 Wolmirstedt",
+          "boxMid": "4202",
           "boxSuffix": "202",
           "couplerNum": "08",
           "couplerPhase": 1,
-          "vzkNum": "22",
+          "vzkNum": "42",
           "hasTA": true,
-          "smNum": "502",
-          "comment": "Fake test data — Hamburg sheet 2"
+          "smNum": "802",
+          "comment": "Fake test data — Magdeburg sheet 2"
         },
         {
-          "clientAddr": "Reeperbahn 101, 20359 Hamburg",
-          "cabinetAddr": "Davidstraße 11, 20359 Hamburg",
-          "boxMid": "2203",
+          "clientAddr": "Magdeburger Straße 33, 39245 Gommern",
+          "cabinetAddr": "Karl-Marx-Straße 9, 39245 Gommern",
+          "boxMid": "4203",
           "boxSuffix": "203",
           "couplerNum": "09",
           "couplerPhase": 2,
-          "vzkNum": "23",
+          "vzkNum": "43",
           "hasTA": false,
-          "smNum": "503",
-          "comment": "Fake test data — Hamburg sheet 2"
+          "smNum": "803",
+          "comment": "Fake test data — Magdeburg sheet 2"
         },
         {
-          "clientAddr": "Jungfernstieg 40, 20354 Hamburg",
-          "cabinetAddr": "Große Bleichen 31, 20354 Hamburg",
-          "boxMid": "2204",
+          "clientAddr": "Berliner Straße 77, 39288 Burg",
+          "cabinetAddr": "Markt 3, 39288 Burg",
+          "boxMid": "4204",
           "boxSuffix": "204",
           "couplerNum": "10",
           "couplerPhase": 2,
-          "vzkNum": "24",
+          "vzkNum": "44",
           "hasTA": true,
-          "smNum": "504",
-          "comment": "Fake test data — Hamburg sheet 2"
+          "smNum": "804",
+          "comment": "Fake test data — Magdeburg sheet 2"
         },
         {
-          "clientAddr": "Altonaer Straße 80, 20357 Hamburg",
-          "cabinetAddr": "Schanzenstraße 36, 20357 Hamburg",
-          "boxMid": "2205",
+          "clientAddr": "Salzer Straße 21, 39218 Schönebeck",
+          "cabinetAddr": "Friedrichstraße 11, 39218 Schönebeck",
+          "boxMid": "4205",
           "boxSuffix": "205",
           "couplerNum": "11",
           "couplerPhase": 3,
-          "vzkNum": "25",
+          "vzkNum": "45",
           "hasTA": false,
-          "smNum": "505",
-          "comment": "Fake test data — Hamburg sheet 2"
+          "smNum": "805",
+          "comment": "Fake test data — Magdeburg sheet 2"
         },
         {
-          "clientAddr": "Fuhlsbüttler Straße 167, 22307 Hamburg",
-          "cabinetAddr": "Barmbeker Markt 14, 22081 Hamburg",
-          "boxMid": "2206",
+          "clientAddr": "Marktstraße 9, 39359 Calvörde",
+          "cabinetAddr": "Bahnhofstraße 2, 39359 Calvörde",
+          "boxMid": "4206",
           "boxSuffix": "206",
           "couplerNum": "12",
           "couplerPhase": 3,
-          "vzkNum": "26",
+          "vzkNum": "46",
           "hasTA": true,
-          "smNum": "506",
-          "comment": "Fake test data — Hamburg sheet 2"
+          "smNum": "806",
+          "comment": "Fake test data — Magdeburg sheet 2"
         }
       ]
     }
