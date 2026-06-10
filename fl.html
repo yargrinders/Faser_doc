@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Glasfaser · Faser-Lookup</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --border: #1e2330;
+    --border-bright: #2a3045;
+    --text: #e8ecf4;
+    --muted: #5a6278;
+    --accent: #3d7fff;
+    --accent-glow: rgba(61,127,255,0.18);
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'SF Pro Display', -apple-system, 'Segoe UI', sans-serif;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+  }
+  .gf-block {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+  }
+
+  /* Header */
+  .gf-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 28px;
+  }
+  .gf-logo {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, #1a2540, #0d1628);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .gf-logo svg { width: 22px; height: 22px; }
+  .gf-title { font-size: 18px; font-weight: 700; letter-spacing: 0.02em; line-height: 1.1; }
+  .gf-title span { color: var(--accent); }
+  .gf-sub { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 3px; }
+
+  /* Clear */
+  .gf-clear-row { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+  .gf-clear-btn {
+    background: none; border: none; color: var(--muted);
+    font-size: 12px; cursor: pointer; padding: 4px 0;
+    display: flex; align-items: center; gap: 5px; letter-spacing: 0.04em;
+    transition: color .15s;
+  }
+  .gf-clear-btn:active { color: var(--text); }
+
+  /* Grid of 4 cards: 2 left / 2 right with divider */
+  .gf-groups {
+    display: grid;
+    grid-template-columns: 1fr 4px 1fr;
+    gap: 0 0;
+    margin-bottom: 16px;
+  }
+  .gf-divider {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 8px 0;
+  }
+  .gf-divider-line { flex: 1; width: 1px; background: var(--border-bright); }
+  .gf-divider-icon { color: var(--muted); font-size: 14px; line-height: 1; }
+
+  .gf-col { display: flex; flex-direction: column; gap: 10px; }
+  .gf-col-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted);
+    text-align: center; padding: 0 8px 4px;
+  }
+
+  /* Card */
+  .gf-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    position: relative; overflow: hidden;
+    transition: border-color .2s;
+    margin: 0 4px;
+  }
+  .gf-card.has-result { border-color: var(--border-bright); }
+  .gf-card-glow {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    opacity: 0; transition: opacity .3s;
+  }
+  .gf-card.has-result .gf-card-glow { opacity: 1; }
+  .gf-card-label {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+  }
+
+  /* Input */
+  .gf-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 28px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    padding: 8px 4px;
+    outline: none; -webkit-appearance: none;
+    transition: border-color .15s, box-shadow .15s;
+    margin-bottom: 12px;
+  }
+  .gf-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .gf-input::placeholder { color: var(--muted); font-size: 20px; }
+  .gf-input::-webkit-inner-spin-button,
+  .gf-input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  /* Result */
+  .gf-result { min-height: 68px; }
+  .gf-empty { color: var(--muted); font-size: 12px; text-align: center; padding-top: 16px; }
+  .gf-swatch { width: 100%; height: 8px; border-radius: 3px; margin-bottom: 8px; }
+  .gf-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .gf-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,.15); }
+  .gf-dot-lg { width: 13px; height: 13px; }
+  .gf-label { font-size: 10px; color: var(--muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .gf-value { font-size: 14px; font-weight: 700; }
+
+  /* Legend */
+  .gf-legend {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 14px 12px;
+  }
+  .gf-legend-title {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+  }
+  .gf-legend-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .gf-legend-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .gf-legend-dot { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); }
+  .gf-legend-num { font-size: 9px; color: var(--muted); font-weight: 700; }
+  .gf-legend-lbl { font-size: 7px; color: var(--muted); text-align: center; line-height: 1.2; }
+</style>
+</head>
+<body>
+<div class="gf-block">
+
+  <div class="gf-header">
+    <div class="gf-logo">
+      <svg viewBox="0 0 20 20" fill="none">
+        <path d="M2 10 Q5 4 10 10 Q15 16 18 10" stroke="#3d7fff" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M2 10 Q5 6 10 10 Q15 14 18 10" stroke="#fff" stroke-width="0.6" stroke-linecap="round" opacity="0.25"/>
+        <circle cx="10" cy="10" r="1.5" fill="#3d7fff"/>
+      </svg>
+    </div>
+    <div>
+      <div class="gf-title">Glas<span>faser</span> · Lookup</div>
+      <div class="gf-sub">Ader &amp; Bündel bestimmen</div>
+    </div>
+  </div>
+
+  <div class="gf-clear-row">
+    <button class="gf-clear-btn" onclick="clearAll()">
+      <svg width="10" height="10" viewBox="0 0 10 10">
+        <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Zurücksetzen
+    </button>
+  </div>
+
+  <div class="gf-groups">
+    <!-- Left: Kabel A -->
+    <div class="gf-col">
+      <div class="gf-col-label">Kabel A</div>
+      <div class="gf-card" id="card-0">
+        <div class="gf-card-glow" id="glow-0"></div>
+        <div class="gf-card-label">Phase 1</div>
+        <input class="gf-input" id="inp-0" type="number" inputmode="numeric" min="1" max="144" placeholder="—" autocomplete="off" oninput="onInput(0)">
+        <div class="gf-result" id="res-0"><div class="gf-empty">Nr. eingeben</div></div>
+      </div>
+      <div class="gf-card" id="card-1">
+        <div class="gf-card-glow" id="glow-1"></div>
+        <div class="gf-card-label">Phase 2</div>
+        <input class="gf-input" id="inp-1" type="number" inputmode="numeric" min="1" max="144" placeholder="—" autocomplete="off" oninput="onInput(1)">
+        <div class="gf-result" id="res-1"><div class="gf-empty">Nr. eingeben</div></div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="gf-divider">
+      <div class="gf-divider-line"></div>
+      <div class="gf-divider-icon">⟷</div>
+      <div class="gf-divider-line"></div>
+    </div>
+
+    <!-- Right: Kabel B -->
+    <div class="gf-col">
+      <div class="gf-col-label">Kabel B</div>
+      <div class="gf-card" id="card-2">
+        <div class="gf-card-glow" id="glow-2"></div>
+        <div class="gf-card-label">Phase 3</div>
+        <input class="gf-input" id="inp-2" type="number" inputmode="numeric" min="1" max="144" placeholder="—" autocomplete="off" oninput="onInput(2)">
+        <div class="gf-result" id="res-2"><div class="gf-empty">Nr. eingeben</div></div>
+      </div>
+      <div class="gf-card" id="card-3">
+        <div class="gf-card-glow" id="glow-3"></div>
+        <div class="gf-card-label">Phase 4</div>
+        <input class="gf-input" id="inp-3" type="number" inputmode="numeric" min="1" max="144" placeholder="—" autocomplete="off" oninput="onInput(3)">
+        <div class="gf-result" id="res-3"><div class="gf-empty">Nr. eingeben</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="gf-legend">
+    <div class="gf-legend-title">Faserfarben · 1–12</div>
+    <div class="gf-legend-grid" id="legendGrid"></div>
+  </div>
+
+</div>
+
+<script>
+const COLORS = [
+  { id:1,  name:"Rot",       hex:"#e53935", text:"#fff" },
+  { id:2,  name:"Grün",      hex:"#43a047", text:"#fff" },
+  { id:3,  name:"Blau",      hex:"#1e88e5", text:"#fff" },
+  { id:4,  name:"Gelb",      hex:"#fdd835", text:"#111" },
+  { id:5,  name:"Weiß",      hex:"#f0f0f0", text:"#111" },
+  { id:6,  name:"Grau",      hex:"#78909c", text:"#fff" },
+  { id:7,  name:"Braun",     hex:"#795548", text:"#fff" },
+  { id:8,  name:"Violett",   hex:"#8e24aa", text:"#fff" },
+  { id:9,  name:"Türkis",    hex:"#00acc1", text:"#fff" },
+  { id:10, name:"Schwarz",   hex:"#212121", text:"#fff" },
+  { id:11, name:"Orange",    hex:"#fb8c00", text:"#fff" },
+  { id:12, name:"Rosa",      hex:"#e91e8c", text:"#fff" },
+];
+
+// Build lookup 1..144 (12 Bündel × 12 Fasern)
+const LOOKUP = {};
+for (let i = 1; i <= 144; i++) {
+  const bIdx = Math.floor((i - 1) / 12);
+  const fIdx = (i - 1) % 12;
+  LOOKUP[i] = {
+    buendelNr:    bIdx + 1,
+    faserNr:      fIdx + 1,
+    buendelFarbe: COLORS[bIdx % 12],
+    faserFarbe:   COLORS[fIdx],
+  };
+}
+
+function onInput(c) {
+  const val = parseInt(document.getElementById(`inp-${c}`).value, 10);
+  showResult(c, val);
+}
+
+function showResult(c, val) {
+  const res  = document.getElementById(`res-${c}`);
+  const card = document.getElementById(`card-${c}`);
+  const glow = document.getElementById(`glow-${c}`);
+
+  if (!val || isNaN(val) || val < 1) {
+    res.innerHTML = `<div class="gf-empty">Nr. eingeben</div>`;
+    card.classList.remove('has-result');
+    glow.style.background = '';
+    return;
+  }
+  if (val > 144) {
+    res.innerHTML = `<div class="gf-empty" style="color:#e57373">max. 144</div>`;
+    card.classList.remove('has-result');
+    glow.style.background = '';
+    return;
+  }
+
+  const d  = LOOKUP[val];
+  const fc = d.faserFarbe;
+  const bc = d.buendelFarbe;
+
+  glow.style.background = `linear-gradient(90deg,${bc.hex},${fc.hex})`;
+  card.classList.add('has-result');
+
+  res.innerHTML = `
+    <div class="gf-swatch" style="background:linear-gradient(90deg,${bc.hex} 40%,${fc.hex} 100%)"></div>
+    <div class="gf-row">
+      <div class="gf-dot" style="background:${bc.hex}"></div>
+      <span class="gf-label">Bündel&nbsp;${d.buendelNr}</span>
+      <span class="gf-value" style="color:${bc.hex}">${bc.name}</span>
+    </div>
+    <div class="gf-row">
+      <div class="gf-dot gf-dot-lg" style="background:${fc.hex}"></div>
+      <span class="gf-label">Ader&nbsp;${d.faserNr}</span>
+      <span class="gf-value" style="color:${fc.hex}">${fc.name}</span>
+    </div>
+  `;
+}
+
+function clearAll() {
+  for (let c = 0; c < 4; c++) {
+    document.getElementById(`inp-${c}`).value = '';
+    showResult(c, null);
+  }
+}
+
+// Legend
+const grid = document.getElementById('legendGrid');
+COLORS.forEach(c => {
+  grid.innerHTML += `
+    <div class="gf-legend-item">
+      <div class="gf-legend-dot" style="background:${c.hex}"></div>
+      <div class="gf-legend-num">${c.id}</div>
+      <div class="gf-legend-lbl">${c.name}</div>
+    </div>`;
+});
+</script>
+</body>
+</html>
